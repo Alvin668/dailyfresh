@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+天天生鲜-首页
+{% endblock  %}
+
+{% block scripts %}
+<script type="text/javascript" src="{% static 'js/jquery-ui.min.js' %}"></script>
+<script type="text/javascript" src=" {% static 'js/slide.js' %}"></script>
+{% endblock  %}
+
+{% block main %}
+
+<div class="navbar_con">
+    <div class="navbar">
+        <h1 class="fl">全部商品分类</h1>
+        <ul class="navlist fl">
+            <li><a href="{% url 'goods:index' %}">首页</a></li>
+            <li class="interval">|</li>
+            <li><a href="{% url 'goods:index' %}">手机生鲜</a></li>
+            <li class="interval">|</li>
+            <li><a href="{% url 'goods:index' %}">抽奖</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="center_con clearfix">
+    <ul class="subnav fl">
+        {% for gt in goods_list %}
+        <li><a href="{% url 'goods:list' gt.id %}" class="{{ gt.logo }}">{{ gt.name }}</a></li>
+        {% endfor %}
+    </ul>
+    <div class="slide fl">
+        <ul class="slide_pics">
+            {% for ban in banners %}
+            {% if forloop.counter == 1 %}
+            <li style="left: 0px;"><img src="{{ ban.image.url }}" alt="幻灯片"></li>
+            {% else %}
+            <li style="left: 760px;"><img src="{{ ban.image.url }}" alt="幻灯片"></li>
+            {% endif %}
+            {% endfor %}
+        </ul>
+        <div class="prev"></div>
+        <div class="next"></div>
+        <ul class="points">
+            <li class=""></li>
+            <li class="active"></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+    <div class="adv fl">
+		{% for p in promotion %}
+		<a href="{{ p.url }}" onclick="app()"><img src="{{ p.image.url }}"></a>
+		{% endfor %}
+    </div>
+</div>
+
+{% for types in goods_list %}
+
+<div class="list_model">
+    <div class="list_title clearfix">
+        <h3 class="fl" id="model01">
+			{{ types.name }}
+        </h3>
+        <div class="subtitle fl">
+            <span>|</span>
+			{% for title in types.goods_titles %}
+			<a href="">{{ title.goods.goods_name }}</a>
+			{% endfor %}
+        </div>
+        <a href="" class="goods_more fr" id="fruit_more">查看更多 &gt;</a>
+    </div>
+    <div class="goods_con clearfix">
+        <div class="goods_banner fl"><img src="{{ types.image.url }}"></div>
+        <ul class="goods_list fl">
+			{% for image in types.goods_images %}
+			  <li>
+                <h4><a href="{% url 'goods:details' image.goods.id %}">{{ image.goods.goods_name }}</a></h4>
+                <a href="{% url 'goods:details' image.goods.id %}"><img src="{{ image.goods.goods_image.url }}"></a>
+                <div class="prize">¥{{ image.goods.price }}</div>
+            </li>
+			{% endfor %}
+
+        </ul>
+    </div>
+</div>
+{% endfor %}
+{% endblock  %}

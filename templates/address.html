@@ -1,0 +1,74 @@
+{% extends 'base_user_center.html' %}
+{% load static %}
+
+{% block title %}
+天天生鲜 - 用户地址
+{% endblock  %}
+
+{% block right_content %}
+<div class="right_content clearfix">
+    <h3 class="common_title2">收货地址</h3>
+    <div class="site_con">
+        <dl>
+            <dt>当前地址：</dt>
+            {% if address %}
+            <dd>{{ address.address }}, {{ address.receiver }} , {{ address.tel_phone }}</dd>
+            {% endif %}
+        </dl>
+    </div>
+    <div class="site_con">
+        <table>
+            <tr>
+                <th>收件人</th>
+                <th>收件地址</th>
+                <th>联系电话</th>
+                <th>邮政编码</th>
+                <th>是否默认</th>
+                <th>所属用户</th>
+            </tr>
+            {% for addr in address_list %}
+            <tr>
+                <td>{{ addr.receiver }}</td>
+                <td>{{ addr.address }}</td>
+                <td>{{ addr.tel_phone }}</td>
+                <td>{{ addr.zip_code }}</td>
+                <td>{{ addr.is_default }}</td>
+                <td>{{ addr.user.username }}</td>
+            </tr>
+            {% empty %}
+            还没有收货地址草药路
+            {% endfor %}
+        </table>
+    </div>
+    <h3 class="common_title2">编辑地址</h3>
+    <div class="site_con">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form_group">
+                <label>收件人：</label>
+                <input type="text" name="username">
+
+            </div>
+            <div class="form_group form_group2">
+                <label>详细地址：</label>
+                <textarea class="site_area" name="address"></textarea>
+
+            </div>
+            <div class="form_group">
+                <label>邮编：</label>
+                <input type="text" name="postcode">
+
+            </div>
+            <div class="form_group">
+                <label>手机：</label>
+                <input type="text" name="mobile">
+
+            </div>
+
+            <input type="submit" name="" value="提交" class="info_submit">
+        </form>
+    </div>
+</div>
+{% endblock  %}
+
+

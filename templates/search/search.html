@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+天天生鲜 - 商品列表
+{% endblock  %}
+{% block main %}
+<div class="main_wrap clearfix">
+    <div class="r_wrap fr clearfix">
+
+        <ul class="goods_type_list clearfix" style="display: none;">
+            {% for goods in page.object_list %}
+            <li>
+                <a href="{% url 'goods:details' goods.object.id %}">
+                    <img src="{{ goods.object.goods_image.url }}"></a>
+                <h4><a href="{% url 'goods:details' goods.object.id %}">{{ goods.object.goods_name }}</a></h4>
+                <div class="operate">
+                    <span class="prize">￥{{ goods.object.price }}</span>
+                    <span class="unit">{{ goods.object.unite }}</span>
+                    <a href="{% url 'goods:details' goods.object.id %}" class="add_goods" title="加入购物车"></a>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        <div>
+            {% for goods in page.object_list %}
+            <img src="{{ goods.object.goods_image.url }}"></br>
+            {% endfor %}
+
+        </div>
+        <div class="pagenation" style="font-size: 12px;">
+            <ul>
+                {% if page.has_previous %}
+                <li style="float:left; margin-left: 5px;">
+                    <a href="/goods/list/{{ type.id }}?page={{ goods_list.previous_page_number }}">上一页</a>
+                </li>
+                {% endif %}
+                {% for p in page.paginator.page_range %}
+                <li style="float:left; margin-left: 5px;">
+                    <a href="/goods/list/{{ type.id }}?page={{ p }}">{{ p }}</a>
+                </li>
+                {% endfor %}
+                {% if goods_list.has_next %}
+                <li style="float:left; margin-left: 5px;">
+                    <a href="/goods/list/{{ type.id }}?page={{ goods_list.next_page_number }}">下一页</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        <!--<li>当前页，共页</li>-->
+    </div>
+</div>
+{% endblock  %}

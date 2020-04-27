@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+天天生鲜 - 商品详情
+{% endblock  %}
+{% block main %}
+
+<div class="navbar_con">
+    <div class="navbar clearfix">
+        <div class="subnav_con fl">
+            <h1>全部商品分类</h1>
+            <span></span>
+            <ul class="subnav">
+                {% for type in goods_type %}
+                <li><a href="{% url 'goods:list' type.id %}" class="{{ type.logo }}">{{ type.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="breadcrumb">
+    <a href="{% url 'goods:index' %}">全部分类</a>
+    <span></span>
+
+    <a href="{% url 'goods:list' goods.goods_type.id %}">
+        {{ goods.goods_type.name }}
+    </a>
+
+    <span></span>
+    <a href="{% url 'goods:details' goods.id %}">商品详情</a>
+</div>
+
+<div class="goods_detail_con clearfix">
+    <div class="goods_detail_pic fl"><img src="{{ goods.goods_image.url }}"></div>
+
+    <div class="goods_detail_list fr">
+        <h3>{{ goods.goods_name }}</h3>
+        <p>{{ goods.goods_desc }}</p>
+        <div class="prize_bar">
+            <span class="show_pirze">¥<em class="show_pirze1">{{ goods.price }}</em></span>
+            <span class="show_unit">单  位：{{ goods.unite }}</span>
+        </div>
+        <div class="goods_num clearfix">
+            <div class="num_name fl">数 量：</div>
+            <div class="num_add fl">
+                <input type="text" class="num_show fl" value="1">
+                <a onclick="add_goods()" href="javascript:;" class="add fr">+</a>
+                <a onclick="sub_goods()" href="javascript:;" class="minus fr">-</a>
+            </div>
+            <script>
+                function add_goods() {
+                    var num = $('.num_show').val()
+                    var price = parseInt($('.show_pirze1').text())
+                    var new_num = parseInt(num) + 1
+                    $('.num_show').val(new_num)
+                    total = new_num * price
+                    $('#price').text(total)
+                }
+
+                function sub_goods() {
+                    var num = $('.num_show').val()
+                    var price = parseInt($('.show_pirze1').text())
+                    if (parseInt(num) > 1) {
+                        var new_num = parseInt(num) - 1
+                        $('.num_show').val(new_num)
+                        total = new_num * price
+                        $('#price').text(total)
+                    }
+                }
+
+            </script>
+        </div>
+        <div class="total">总价：<em id="price">{{ goods.price }}</em>元</div>
+        <div class="operate_btn">
+            <a href="javascript:;" class="buy_btn">立即购买</a>
+            <a onclick="add_cart({{ goods.id }})" href="javascript:;" class="add_cart" id="add_cart">
+                加入购物车
+            </a>
+            {% csrf_token %}
+        </div>
+        <script>
+            function add_cart(id) {
+                var num = $('.num_show').val()
+                var csrf = $('input[name="csrfmiddlewaretoken"]').val()
+                $.ajax({
+                    url: '/cart/add_cart/',
+                    type: 'POST',
+                    data: {'goods_id': id, 'goods_num': num},
+                    headers: {'X-CSRFToken': csrf},
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log(data)
+                        if (data.code == '200') {
+                            $('#show_count').text(data.count)
+                        }
+                    },
+                    error: function (data) {
+                        alert('失败')
+                    }
+                })
+            }
+
+            function app() {
+                alert('暂无此功能')
+                location.reload
+            }
+        </script>
+    </div>
+</div>
+
+<div class="main_wrap clearfix">
+    <div class="l_wrap fl clearfix">
+        <div class="new_goods">
+            <h3>新品推荐</h3>
+            <ul>
+                {% for ng in new_goods %}
+                <li>
+                    <a href="{% url 'goods:details' ng.id %}"><img
+                            src="{{ ng.goods_image.url }}"></a>
+                    <h4><a href="{% url 'goods:details' ng.id %}">草莓</a></h4>
+                    <div class="prize">￥{{ ng.price }}</div>
+                </li>
+                {% endfor %}
+
+            </ul>
+        </div>
+    </div>
+
+    <div class="r_wrap fr clearfix">
+        <ul class="detail_tab clearfix">
+            <li class="active">商品介绍</li>
+            <li>评论</li>
+        </ul>
+        <div class="tab_content">
+            <dl>
+                <dt>商品详情：</dt>
+                <dd>{{ goods.goods.goods_details|safe }}</dd>
+            </dl>
+        </div>
+
+    </div>
+</div>
+<div class="add_jump" style="left: 790.5px; top: 564px; display: block;"></div>
+
+<script type="text/javascript">
+    $('#add_cart').click(function () {
+        var $add_x = $('#add_cart').offset().top;
+        var $add_y = $('#add_cart').offset().left;
+        var $to_x = $('#show_count').offset().top;
+        var $to_y = $('#show_count').offset().left;
+        $(".add_jump").css({'left': $add_y + 80, 'top': $add_x + 10, 'display': 'block'})
+        $(".add_jump").stop().animate({
+                'left': $to_y + 7,
+                'top': $to_x + 7
+            },
+            "slow", function () {
+                $(".add_jump").fadeOut('slow', function () {
+                });
+            });
+    })
+</script>
+{% endblock  %}

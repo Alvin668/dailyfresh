@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<!-- saved from url=(0037)http://timemorale.com/user/user_info/ -->
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    {% load static %}
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/reset.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <script type="text/javascript" src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
+    {% block scripts %}
+    {% endblock %}
+</head>
+<body>
+{% block header %}
+<div class="header_con">
+    <div class="header">
+        <div class="welcome fl"><a href="http://timemorale.com/goods/index/">欢迎来到天天生鲜!</a></div>
+        <div class="fr">
+            {% if user.is_authenticated %}
+            <div class="login_info fl" style="display: block">
+                欢迎您：<em>{{ user.username }}</em>
+                <span>|</span>
+                <a href="{% url 'user:logout' %}">退出</a>
+            </div>
+            {% else %}
+            <div class="login_btn fl" style="display: block">
+                <a href="{% url 'user:login' %}">登录</a>
+                <span>|</span>
+                <a href="{% url 'user:register' %}">注册</a>
+            </div>
+            {% endif %}
+            <div class="user_link fl">
+                <span>|</span>
+                <a href="{% url 'user:userinfo' %}">用户中心</a>
+                <span>|</span>
+                <a href="http://timemorale.com/cart/cart/">我的购物车</a>
+                <span>|</span>
+                <a href="http://timemorale.com/order/user_order/">我的订单</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block search %}
+<div class="search_bar clearfix">
+    <a href="{% url 'goods:index' %}" class="logo fl"><img src="{% static 'images/logo02.png' %}"></a>
+    <div class="search_con fl">
+        <form action="/search/" method="get">
+            <input type="text" class="input_text fl" name="q" placeholder="搜索商品">
+            <input type="submit" class="input_btn fr" value="搜索">
+        </form>
+    </div>
+    {% block cart %}
+    <div class="guest_cart fr">
+        <a href="{% url 'cart:add_cart' %}" class="cart_name fl">我的购物车</a>
+        <div class="goods_count fl" id="show_count">{{ cart_count }}</div>
+    </div>
+    {% endblock %}
+</div>
+{% endblock %}
+
+{% block main %}
+{% endblock %}
+
+<div class="footer">
+    <div class="foot_link">
+        <a href="http://timemorale.com/user/user_info/" onclick="none()">关于我们</a>
+        <span>|</span>
+        <a href="http://timemorale.com/user/user_info/" onclick="none()">联系我们</a>
+        <span>|</span>
+        <a href="http://timemorale.com/user/user_info/" onclick="none()">招聘人才</a>
+        <span>|</span>
+        <a href="http://timemorale.com/user/user_info/" onclick="none()">友情链接</a>
+    </div>
+    <p>CopyRight © 2016 北京天天生鲜信息技术有限公司 All Rights Reserved</p>
+    <p>电话：010-****888 京ICP备*******8号</p>
+</div>
+<script>
+    function none() {
+        alert('暂不开放，滚')
+        location.reload
+    }
+</script>
+</body>
+</html>

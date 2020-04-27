@@ -1,0 +1,98 @@
+{% extends 'base_user_center.html' %}
+{% load static %}
+{% block title %}
+天天生鲜 - 我的订单
+{% endblock  %}
+
+{% block right_content %}
+<div class="right_content clearfix">
+    <h3 class="common_title2">全部订单</h3>
+    {% for order in order_list %}
+    <ul class="order_list_th w978 clearfix">
+        <li class="col01">{{ order.create_time }}</li>
+        <li class="col02">订单号：{{ order.order_id }}</li>
+        <li class="col02 stress">{{ order.status_des }}</li>
+    </ul>
+
+    <table class="order_list_table w980">
+        <tbody>
+        <tr>
+            <td width="55%">
+                {% for goods in goods_list %}
+                {% if goods.order.order_id == order.order_id %}
+                <ul class="order_goods_list clearfix">
+                    <li class="col01"><img src="{{ goods.goods.goods_image.url }}"></li>
+                    <li class="col02">{{ goods.goods.goods_name }}<em>{{ goods.price }}/{{ goods.goods.unite }}</em>
+                    </li>
+                    <li class="col03">{{ goods.count }}</li>
+                    <li class="col04">{{ goods.price }}</li>
+                </ul>
+                {% endif %}
+                {% endfor %}
+            </td>
+            <td width="15%">{{ order.amount|add:order.transfer_price }}</td>
+            <td width="15%">{{ order.status_des }}</td>
+            <td width="15%">
+                {% if order.order_status == 1 %}
+                <a id="pay" order_id="{{ order.order_id }}" href="javascript:void(0)"
+                               class="oper_btn" onclick="payorder()">去付款</a>
+                {% else %}
+                {{ order.status_des }}
+                {% endif %}
+
+
+            </td>
+            {% csrf_token %}
+        </tr>
+        </tbody>
+    </table>
+
+    {% endfor %}
+    <div class="pagenation">
+        <a href="#">
+            上一页
+        </a>
+        <a href="#" class="active">1</a>
+        <a href="#">2</a>
+        <a href="#">3</a>
+        <a href="#">4</a>
+        <a href="#">5</a>
+        <a href="#">下一页</a>
+    </div>
+</div>
+<script type="text/javascript">
+    function payorder() {
+        order_id = $("#pay").attr('order_id')
+        csrf = $('input[name="csrfmiddlewaretoken"]').val()
+        $.ajax({
+            url: '/orders/payorder/',
+            type: 'post',
+            data: {'order_id': order_id, 'csrfmiddlewaretoken': csrf},
+            dataType: 'json',
+            success: function (data) {
+                window.open(data.url)
+                $.ajax({
+                    url: '/orders/orderquery/',
+                    type: 'get',
+                    data: {'order_id': order_id, 'csrfmiddlewaretoken': csrf},
+                    dataType: 'json',
+                    success: function (data) {
+                        alert(data.msg)
+                        location.reload()
+                    },
+                });
+            },
+            error: function (data) {
+
+            }
+        });
+    }
+
+</script>
+{% endblock  %}
+
+
+
+
+
+

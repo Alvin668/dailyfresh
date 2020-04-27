@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>会员激活</title>
+</head>
+<body>
+<h1>恭喜您成为天天优享会员，请点击下方链接继续完成注册！</h1>
+<a href="{% url 'user:active' token=token %}">http://127.0.0.1:8000/user/active/{{ token }}</a>
+</body>
+</html>

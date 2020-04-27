@@ -1,0 +1,29 @@
+启动uwsgi：uwsgi --ini /home/alvin/Projects/code/dailyfresh/uwsgi_config.ini
+
+sudo service fdfs_trackerd start 启动tracker
+sudo service fdfs_storaged start 启动storage
+sudo /usr/local/nginx/sbin/nginx 启动nginx
+
+ubuntu python3 创建虚拟环境：
+先安装venv, sudo apt-get install python3-venv
+执行命令创建虚拟环境：python3 -m venv caolouyaqian
+
+ubuntu pip install 超时问题解决办法
+$ sudo vi ~/.pip/pip.config //linux or MacOS
+[global]
+timeout = 6000
+index-url = http://pypi.douban.com/simple
+trusted-host = pypi.douban.com
+[install]
+use-mirrors = true
+mirrors = http://pypi.douban.com
+
+django 依赖库收集到文件
+pip freeze > requirement.txt
+安装 pip install -r requirement.txt
+
+127.0.0.1
+
+pip install xx -i https://pypi.douban.com/simple
+
+pyinstaller -i schedule.ico -F -w main.py

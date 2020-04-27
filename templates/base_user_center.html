@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main %}
+<div class="main_con clearfix">
+    <div class="left_menu_con clearfix">
+        <h3>用户中心</h3>
+        <ul>
+            <li><a href="{% url 'user:userinfo' %}" {% if page == 'user' %} class="active" {% endif %}>· 个人信息</a></li>
+            <li><a href="{% url 'orders:myorders' %}" {% if page == 'orders' %} class="active" {% endif %}>· 我的订单</a></li>
+            <li><a href="{% url 'user:address' %}" {% if page == 'address' %} class="active" {% endif %}>· 收货地址</a></li>
+        </ul>
+    </div>
+    {% block right_content %}
+    {% endblock  %}
+</div>
+{% endblock  %}

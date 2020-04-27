@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+天天生鲜 - 购物车
+{% endblock  %}
+
+{% block main %}
+
+<div class="total_count">全部商品<em>{{ cart_count }}</em>件</div>
+<ul class="cart_list_th clearfix">
+    <li class="col01">商品名称</li>
+    <li class="col02">商品单位</li>
+    <li class="col03">商品价格</li>
+    <li class="col04">数量</li>
+    <li class="col05">小计</li>
+    <li class="col06">操作</li>
+</ul>
+<form action="{% url 'orders:orders' %}" method="post">
+    {% csrf_token %}
+    {% for goods in goods_list %}
+
+    <ul class="cart_list_td clearfix" id="goods_{{ goods.id }}">
+        <li class="col01"><input id="is_select{{ goods.id }}" onclick="is_select({{ goods.id }})" type="checkbox"
+                                 name="cart_goods" value="{{ goods.id }}" checked="">
+        </li>
+        <li class="col02"><img src="{{ goods.goods_image.url }}"></li>
+        <li class="col03">草莓<br><em>{{ goods.price }}/{{ goods.unite }}</em></li>
+        <li class="col04">{{ goods.unite }}</li>
+        <li class="col05">{{ goods.price }}元</li>
+        <li class="col06">
+            <div class="num_add">
+                <a onclick="add_cart({{ goods.id }})" href="javascript:;" class="add fl">
+                    +
+                </a>
+                <input id="num_show_{{ goods.id }}" type="text" class="num_show fl" value="{{ goods.count }}">
+                <a onclick="sub_cart({{ goods.id }})" href="javascript:;" class="minus fl">
+                    -
+                </a>
+            </div>
+        </li>
+        <li class="col07">{{ goods.total_price }}元</li>
+        <li class="col08"><a href="javascript:;" onclick="del_goods({{ goods.id }})">删除</a></li>
+    </ul>
+    {% endfor %}
+
+    <ul class="settlements">
+        <li class="col01"><input type="checkbox" name="" checked=""></li>
+        <li class="col02">全选</li>
+        <li class="col03">合计(不含运费)：<span>¥</span><em>{{ total_price }}</em><br>共计<b>{{ cart_count }}</b>件商品</li>
+        <li class="col04">
+            <button type="submit" style="cursor:pointer;">去结算</button>
+        </li>
+    </ul>
+
+</form>
+<script type="text/javascript">
+    // function cart_price() {
+    //     $.get('/cart/cart_price/', function (data) {
+    //         if (data.code == '200') {
+    //             $('.total_count em').html(data.all_total)
+    //             $('.settlements .col03 em').html(data.all_price)
+    //             $('.settlements .col03 b').html(data.is_select_num)
+    //         }
+    //     })
+    // }
+    //
+    // cart_price()
+
+    <!--增加商品-->
+    function add_cart(id) {
+        var num = $('#num_show_' + id).val()
+        var new_num = parseInt(num) + 1
+        $('#num_show_' + id).val(new_num)
+        change_cart(id, new_num)
+    }
+
+    function sub_cart(id) {
+        var num = $('#num_show_' + id).val()
+        if (parseInt(num) > 1) {
+            var new_num = parseInt(num) - 1
+            $('#num_show_' + id).val(new_num)
+            change_cart(id, new_num)
+        }
+    }
+
+    function is_select(id) {
+        var csrf = $('input[name="csrfmiddlewaretoken"]').val()
+        if ($('#is_select' + id).is(':checked')) {
+            alert('添加勾选')
+            $.ajax({
+                url: '/cart/is_select/',
+                type: 'POST',
+                data: {'goods_id': id, 'is_select': 0},
+                headers: {'X-CSRFToken': csrf},
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data)
+                    window.location.reload()
+                    cart_price()
+                },
+                error: function (data) {
+                    console.log('失败')
+                }
+            })
+        } else {
+            alert('取消勾选')
+            $.ajax({
+                url: '/cart/is_select/',
+                type: 'POST',
+                data: {'goods_id': id, 'is_select': 1},
+                headers: {'X-CSRFToken': csrf},
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data)
+                    //<!--window.location.reload()-- >
+                    cart_price()
+                },
+                error: function (data) {
+                    console.log('失败')
+                }
+            })
+        }
+    }
+
+    function del_goods(id) {
+        var csrf = $('input[name="csrfmiddlewaretoken"]').val()
+        $.ajax({
+            <!--url:'/cart/del_goods/' + id + '/',-->
+            url: '/cart/del_goods/',
+            type: 'POST',
+            data: {'goods_id': id},
+            headers: {'X-CSRFToken': csrf},
+            dataType: 'json',
+            success: function (data) {
+                window.location.reload();
+            },
+            error: function (data) {
+                alert('失败')
+            }
+        })
+    }
+
+    function change_cart(id, new_num) {
+        var csrf = $('input[name="csrfmiddlewaretoken"]').val()
+        $.ajax({
+            url: '/cart/change_cart/',
+            type: 'POST',
+            data: {'goods_id': id, 'goods_num': new_num},
+            headers: {'X-CSRFToken': csrf},
+            dataType: 'json',
+            success: function (data) {
+                <!--刷新数量/总价/件数-->
+                //cart_price()
+                window.location.reload()
+
+            },
+            error: function (data) {
+            }
+        })
+    }
+
+</script>
+{% endblock  %}
